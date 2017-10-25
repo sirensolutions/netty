@@ -69,7 +69,7 @@
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-buffer</artifactId>
-        <version>4.0.49.Final</version>
+        <version>siren-4.0.49.Final</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
@@ -94,7 +94,7 @@
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-common</artifactId>
-        <version>4.0.49.Final</version>
+        <version>siren-4.0.49.Final</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
