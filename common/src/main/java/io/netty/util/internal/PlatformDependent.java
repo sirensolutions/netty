@@ -53,7 +53,7 @@ import java.util.regex.Pattern;
  * {@code sun.misc.Unsafe} object.
  * <p>
  * You can disable the use of {@code sun.misc.Unsafe} if you specify
- * the system property <strong>io.netty.noUnsafe</strong>.
+ * the system property <strong>siren.io.netty.noUnsafe</strong>.
  */
 public final class PlatformDependent {
 
