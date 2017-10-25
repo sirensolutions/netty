@@ -43,11 +43,12 @@ import static io.netty.util.internal.MathUtil.isOutOfBounds;
  */
 public abstract class AbstractByteBuf extends ByteBuf {
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(AbstractByteBuf.class);
-    private static final String PROP_MODE = "io.netty.buffer.bytebuf.checkAccessible";
+    private static final String PROP_MODE = "siren.io.netty.buffer.bytebuf.checkAccessible";
     private static final boolean checkAccessible;
 
     static {
-        checkAccessible = SystemPropertyUtil.getBoolean(PROP_MODE, true);
+        // siren: set the default value to false
+        checkAccessible = SystemPropertyUtil.getBoolean(PROP_MODE, false);
         if (logger.isDebugEnabled()) {
             logger.debug("-D{}: {}", PROP_MODE, checkAccessible);
         }
