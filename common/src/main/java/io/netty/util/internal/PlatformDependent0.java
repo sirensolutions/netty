@@ -75,6 +75,7 @@ final class PlatformDependent0 {
         if ((unsafeUnavailabilityCause = EXPLICIT_NO_UNSAFE_CAUSE) != null) {
             direct = null;
             addressField = null;
+            unsafeUnavailabilityCause = new UnsupportedOperationException("Unsafe explicitly disabled");
             unsafe = null;
             internalUnsafe = null;
         } else {
@@ -222,7 +223,7 @@ final class PlatformDependent0 {
                                 try {
                                     final Constructor<?> constructor =
                                             direct.getClass().getDeclaredConstructor(long.class, int.class);
-                                    Throwable cause = ReflectionUtil.trySetAccessible(constructor, true);
+                                    Throwable cause = ReflectionUtil.trySetAccessible(constructor);
                                     if (cause != null) {
                                         return cause;
                                     }
@@ -290,7 +291,7 @@ final class PlatformDependent0 {
                             }
                         }
                         Method unalignedMethod = bitsClass.getDeclaredMethod("unaligned");
-                        Throwable cause = ReflectionUtil.trySetAccessible(unalignedMethod, true);
+                        Throwable cause = ReflectionUtil.trySetAccessible(unalignedMethod);
                         if (cause != null) {
                             return cause;
                         }
