@@ -1266,7 +1266,8 @@
           <version>1.5</version>
           <configuration>
             <resourceBundles>
-              <resourceBundle>io.netty:netty-dev-tools:${project.version}</resourceBundle>
+              <!--siren: explicitly set the version instead of relying on the ${project.version} property because of the siren prefix-->
+              <resourceBundle>io.netty:netty-dev-tools:4.1.17.Final</resourceBundle>
             </resourceBundles>
             <outputDirectory>${netty.dev.tools.directory}</outputDirectory>
             <!-- don't include netty-dev-tools in artifacts -->
