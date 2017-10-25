@@ -46,19 +46,20 @@ import static io.netty.util.internal.ObjectUtil.checkPositiveOrZero;
  */
 public abstract class AbstractByteBuf extends ByteBuf {
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(AbstractByteBuf.class);
-    private static final String LEGACY_PROP_CHECK_ACCESSIBLE = "io.netty.buffer.bytebuf.checkAccessible";
-    private static final String PROP_CHECK_ACCESSIBLE = "io.netty.buffer.checkAccessible";
+    private static final String LEGACY_PROP_CHECK_ACCESSIBLE = "siren.io.netty.buffer.bytebuf.checkAccessible";
+    private static final String PROP_CHECK_ACCESSIBLE = "siren.io.netty.buffer.checkAccessible";
     static final boolean checkAccessible; // accessed from CompositeByteBuf
-    private static final String PROP_CHECK_BOUNDS = "io.netty.buffer.checkBounds";
+    private static final String PROP_CHECK_BOUNDS = "siren.io.netty.buffer.checkBounds";
     private static final boolean checkBounds;
 
     static {
+	// siren: set the default value to false
         if (SystemPropertyUtil.contains(PROP_CHECK_ACCESSIBLE)) {
             checkAccessible = SystemPropertyUtil.getBoolean(PROP_CHECK_ACCESSIBLE, true);
         } else {
             checkAccessible = SystemPropertyUtil.getBoolean(LEGACY_PROP_CHECK_ACCESSIBLE, true);
         }
-        checkBounds = SystemPropertyUtil.getBoolean(PROP_CHECK_BOUNDS, true);
+        checkBounds = SystemPropertyUtil.getBoolean(PROP_CHECK_BOUNDS, false);
         if (logger.isDebugEnabled()) {
             logger.debug("-D{}: {}", PROP_CHECK_ACCESSIBLE, checkAccessible);
             logger.debug("-D{}: {}", PROP_CHECK_BOUNDS, checkBounds);
@@ -309,7 +310,10 @@ public abstract class AbstractByteBuf extends ByteBuf {
     @Override
     public int ensureWritable(int minWritableBytes, boolean force) {
         ensureAccessible();
-        checkPositiveOrZero(minWritableBytes, "minWritableBytes");
+        if (minWritableBytes < 0) {
+            throw new IllegalArgumentException(String.format(
+                    "minWritableBytes: %d (expected: >= 0)", minWritableBytes));
+        }
 
         if (minWritableBytes <= writableBytes()) {
             return 0;
@@ -326,9 +330,8 @@ public abstract class AbstractByteBuf extends ByteBuf {
             return 3;
         }
 
-        int fastWritable = maxFastWritableBytes();
-        int newCapacity = fastWritable >= minWritableBytes ? writerIndex + fastWritable
-                : alloc().calculateNewCapacity(writerIndex + minWritableBytes, maxCapacity);
+        // Normalize the current capacity to the power of 2.
+        int newCapacity = alloc().calculateNewCapacity(writerIndex + minWritableBytes, maxCapacity);
 
         // Adjust to the new capacity.
         capacity(newCapacity);
