@@ -74,22 +74,22 @@
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-codec</artifactId>
-        <version>siren-4.0.49.Final</version>
+        <version>4.0.49.Final</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-codec-haproxy</artifactId>
-        <version>siren-4.0.49.Final</version>
+        <version>4.0.49.Final</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-codec-http</artifactId>
-        <version>siren-4.0.49.Final</version>
+        <version>4.0.49.Final</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-codec-socks</artifactId>
-        <version>siren-4.0.49.Final</version>
+        <version>4.0.49.Final</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
@@ -99,37 +99,37 @@
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-handler</artifactId>
-        <version>siren-4.0.49.Final</version>
+        <version>4.0.49.Final</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-transport</artifactId>
-        <version>siren-4.0.49.Final</version>
+        <version>4.0.49.Final</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-transport-rxtx</artifactId>
-        <version>siren-4.0.49.Final</version>
+        <version>4.0.49.Final</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-transport-sctp</artifactId>
-        <version>siren-4.0.49.Final</version>
+        <version>4.0.49.Final</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-transport-udt</artifactId>
-        <version>siren-4.0.49.Final</version>
+        <version>4.0.49.Final</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-example</artifactId>
-        <version>siren-4.0.49.Final</version>
+        <version>4.0.49.Final</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-all</artifactId>
-        <version>siren-4.0.49.Final</version>
+        <version>4.0.49.Final</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
@@ -139,7 +139,7 @@
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-transport-native-epoll</artifactId>
-        <version>siren-4.0.49.Final</version>
+        <version>4.0.49.Final</version>
         <classifier>linux-x86_64</classifier>
       </dependency>
     </dependencies>
