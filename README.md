@@ -1,3 +1,27 @@
+# Siren fork of Netty
+
+## Changes
+
+The following parameters have been prefixed with the `siren` keyword in order to avoid conflict with users possibly setting Netty's original parameters:
+
+- io.netty.buffer.bytebuf.checkAccessible; and
+- io.netty.noUnsafe.
+
+## Build
+
+Because we set the default value of `io.netty.buffer.bytebuf.checkAccessible` to `false`, we need to set it as `true` when building the package so that the build passes.
+For example, in order to build the `common` and `buffer` packages, execute the following command:
+
+```sh
+$ JAVA_HOME=/usr/lib/jvm/java-8-jdk mvn package -pl common,buffer -Dsiren.io.netty.buffer.bytebuf.checkAccessible=true
+```
+
+To deploy:
+
+```sh
+$ mvn clean deploy -Dmaven.test.skip=true -pl common,buffer -P artifactory -Dartifactory_username=<USERNAME> -Dartifactory_password=<PASSWORD>
+```
+
 # Netty Project
 
 Netty is an asynchronous event-driven network application framework for rapid development of maintainable high performance protocol servers & clients.
