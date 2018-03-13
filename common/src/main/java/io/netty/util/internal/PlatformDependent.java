@@ -1333,6 +1333,14 @@ public final class PlatformDependent {
         return "unknown";
     }
 
+    public static long getDirectMemoryCounter() {
+        return DIRECT_MEMORY_COUNTER.get();
+    }
+
+    public static long directMemoryLimit() {
+        return DIRECT_MEMORY_LIMIT;
+    }
+
     private static final class AtomicLongCounter extends AtomicLong implements LongCounter {
         private static final long serialVersionUID = 4074772784610639305L;
 
