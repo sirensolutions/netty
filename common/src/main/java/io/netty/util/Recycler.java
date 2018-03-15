@@ -49,7 +49,7 @@ public abstract class Recycler<T> {
     };
     private static final AtomicInteger ID_GENERATOR = new AtomicInteger(Integer.MIN_VALUE);
     private static final int OWN_THREAD_ID = ID_GENERATOR.getAndIncrement();
-    private static final int DEFAULT_INITIAL_MAX_CAPACITY_PER_THREAD = 32768; // Use 32k instances as default.
+    private static final int DEFAULT_INITIAL_MAX_CAPACITY_PER_THREAD = 0; // siren: no max on default
     private static final int DEFAULT_MAX_CAPACITY_PER_THREAD;
     private static final int INITIAL_CAPACITY;
     private static final int MAX_SHARED_CAPACITY_FACTOR;
@@ -61,8 +61,10 @@ public abstract class Recycler<T> {
         // In the future, we might have different maxCapacity for different object types.
         // e.g. io.netty.recycler.maxCapacity.writeTask
         //      io.netty.recycler.maxCapacity.outboundBuffer
-        int maxCapacityPerThread = SystemPropertyUtil.getInt("io.netty.recycler.maxCapacityPerThread",
-                SystemPropertyUtil.getInt("io.netty.recycler.maxCapacity", DEFAULT_INITIAL_MAX_CAPACITY_PER_THREAD));
+        final int maxCapacity = SystemPropertyUtil.getInt("siren.io.netty.recycler.maxCapacity",
+            DEFAULT_INITIAL_MAX_CAPACITY_PER_THREAD);
+        int maxCapacityPerThread = SystemPropertyUtil.getInt("siren.io.netty.recycler.maxCapacityPerThread",
+            maxCapacity);
         if (maxCapacityPerThread < 0) {
             maxCapacityPerThread = DEFAULT_INITIAL_MAX_CAPACITY_PER_THREAD;
         }
@@ -88,8 +90,8 @@ public abstract class Recycler<T> {
 
         if (logger.isDebugEnabled()) {
             if (DEFAULT_MAX_CAPACITY_PER_THREAD == 0) {
-                logger.debug("-Dio.netty.recycler.maxCapacityPerThread: disabled");
-                logger.debug("-Dio.netty.recycler.maxSharedCapacityFactor: disabled");
+                logger.debug("-Dsiren.io.netty.recycler.maxCapacityPerThread: disabled");
+                logger.debug("-Dsiren.io.netty.recycler.maxSharedCapacityFactor: disabled");
                 logger.debug("-Dio.netty.recycler.linkCapacity: disabled");
                 logger.debug("-Dio.netty.recycler.ratio: disabled");
             } else {

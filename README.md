@@ -4,16 +4,24 @@
 
 The following parameters have been prefixed with the `siren` keyword in order to avoid conflict with users possibly setting Netty's original parameters:
 
+- io.netty.recycler.maxCapacityPerThread;
+- io.netty.recycler.maxCapacity;
 - io.netty.buffer.bytebuf.checkAccessible; and
 - io.netty.noUnsafe.
 
+The default value of DEFAULT_INITIAL_MAX_CAPACITY_PER_THREAD is set to 0 instead of 32k so that netty's recycler is disabled. See https://github.com/elastic/elasticsearch/pull/22452 for more context on the issues with the recycler.
+
 ## Build
 
-Because we set the default value of `io.netty.buffer.bytebuf.checkAccessible` to `false`, we need to set it as `true` when building the package so that the build passes.
+With the change of defaults, some parameters need to have their original default values for the build to pass:
+
+- set `siren.io.netty.recycler.maxCapacityPerThread` to `32768`
+- set `siren.io.netty.buffer.bytebuf.checkAccessible` to `false`
+
 For example, in order to build the `common` and `buffer` packages, execute the following command:
 
 ```sh
-$ JAVA_HOME=/usr/lib/jvm/java-8-jdk mvn package -pl common,buffer -Dsiren.io.netty.buffer.bytebuf.checkAccessible=true
+$ JAVA_HOME=/usr/lib/jvm/java-8-jdk mvn package -pl common,buffer -Dsiren.io.netty.buffer.bytebuf.checkAccessible=true -Dsiren.io.netty.recycler.maxCapacityPerThread=32768
 ```
 
 To deploy:
