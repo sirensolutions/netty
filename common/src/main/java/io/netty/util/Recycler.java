@@ -312,7 +312,6 @@ public abstract class Recycler<T> {
         private Link tail;
         // pointer to another queue of delayed items for the same stack
         private WeakOrderQueue next;
-        private final WeakReference<Thread> owner;
         private final int id = ID_GENERATOR.getAndIncrement();
         private final int interval;
         private int handleRecycleCount;
@@ -555,7 +554,6 @@ public abstract class Recycler<T> {
             }
             ret.recycleId = 0;
             ret.lastRecycledId = 0;
-            this.size = size;
             return ret;
         }
 
