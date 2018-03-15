@@ -4,6 +4,11 @@
 
 All the parameters `io.netty.*` were prefixed with the `siren` keyword in order to avoid conflict with users possibly setting Netty's original parameters.
 
+- io.netty.recycler.maxCapacityPerThread;
+- io.netty.recycler.maxCapacity;
+- io.netty.buffer.bytebuf.checkAccessible; and
+- io.netty.noUnsafe.
+
 The default value of DEFAULT_INITIAL_MAX_CAPACITY_PER_THREAD is set to 0 instead of 32k so that netty's recycler is disabled. See https://github.com/elastic/elasticsearch/pull/22452 for more context on the issues with the recycler.
 
 ## Build
@@ -31,20 +36,20 @@ Netty is an asynchronous event-driven network application framework for rapid de
 
 ## Links
 
-* [Web Site](http://netty.io/)
-* [Downloads](http://netty.io/downloads.html)
-* [Documentation](http://netty.io/wiki/)
+* [Web Site](https://netty.io/)
+* [Downloads](https://netty.io/downloads.html)
+* [Documentation](https://netty.io/wiki/)
 * [@netty_project](https://twitter.com/netty_project)
 
 ## How to build
 
-For the detailed information about building and developing Netty, please visit [the developer guide](http://netty.io/wiki/developer-guide.html).  This page only gives very basic information.
+For the detailed information about building and developing Netty, please visit [the developer guide](https://netty.io/wiki/developer-guide.html).  This page only gives very basic information.
 
 You require the following to build Netty:
 
 * Latest stable [Oracle JDK 7](http://www.oracle.com/technetwork/java/)
 * Latest stable [Apache Maven](http://maven.apache.org/)
-* If you are on Linux, you need [additional development packages](http://netty.io/wiki/native-transports.html) installed on your system, because you'll build the native transport.
+* If you are on Linux, you need [additional development packages](https://netty.io/wiki/native-transports.html) installed on your system, because you'll build the native transport.
 
 Note that this is build-time requirement.  JDK 5 (for 3.x) or 6 (for 4.0+) is enough to run your Netty-based application.
 
