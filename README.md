@@ -21,13 +21,13 @@ With the change of defaults, some parameters need to have their original default
 For example, in order to build the `common` and `buffer` packages, execute the following command:
 
 ```sh
-$ JAVA_HOME=/usr/lib/jvm/java-8-jdk mvn package -pl common,buffer -Dsiren.io.netty.buffer.bytebuf.checkAccessible=true -Dsiren.io.netty.recycler.maxCapacityPerThread=32768
+$ JAVA_HOME=/usr/lib/jvm/java-8-jdk mvn package -pl dev-tools,common,buffer -Dsiren.io.netty.buffer.bytebuf.checkAccessible=true -Dsiren.io.netty.recycler.maxCapacityPerThread=32768
 ```
 
 To deploy:
 
 ```sh
-$ mvn clean deploy -Dmaven.test.skip=true -pl common,buffer -P artifactory -Dartifactory_username=<USERNAME> -Dartifactory_password=<PASSWORD>
+$ mvn clean deploy -DskipTests=true -pl dev-tools,common,buffer -P artifactory -Dartifactory_username=<USERNAME> -Dartifactory_password=<PASSWORD>
 ```
 
 # Netty Project
