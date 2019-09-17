@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>netty-buffer</artifactId>
-  <version>siren-4.1.17.Final</version>
+  <version>siren-4.1.27.Final</version>
   <packaging>jar</packaging>
 
   <name>Netty/Buffer</name>
