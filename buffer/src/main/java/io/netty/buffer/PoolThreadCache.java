@@ -20,7 +20,6 @@ package io.netty.buffer;
 import io.netty.buffer.PoolArena.SizeClass;
 import io.netty.util.Recycler;
 import io.netty.util.Recycler.Handle;
-import io.netty.util.ThreadDeathWatcher;
 import io.netty.util.internal.MathUtil;
 import io.netty.util.internal.PlatformDependent;
 import io.netty.util.internal.logging.InternalLogger;
@@ -28,6 +27,7 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Acts a Thread cache for allocations. This implementation is moduled after
@@ -55,9 +55,7 @@ final class PoolThreadCache {
     private final int numShiftsNormalDirect;
     private final int numShiftsNormalHeap;
     private final int freeSweepAllocationThreshold;
-
-    private final Thread deathWatchThread;
-    private final Runnable freeTask;
+    private final AtomicBoolean freed = new AtomicBoolean();
 
     private int allocations;
 
@@ -112,29 +110,12 @@ final class PoolThreadCache {
             numShiftsNormalHeap = -1;
         }
 
-        // We only need to watch the thread when any cache is used.
-        if (tinySubPageDirectCaches != null || smallSubPageDirectCaches != null || normalDirectCaches != null
-                || tinySubPageHeapCaches != null || smallSubPageHeapCaches != null || normalHeapCaches != null) {
-            // Only check freeSweepAllocationThreshold when there are caches in use.
-            if (freeSweepAllocationThreshold < 1) {
-                throw new IllegalArgumentException("freeSweepAllocationThreshold: "
-                        + freeSweepAllocationThreshold + " (expected: > 0)");
-            }
-            freeTask = new Runnable() {
-                @Override
-                public void run() {
-                    free0();
-                }
-            };
-
-            deathWatchThread = Thread.currentThread();
-
-            // The thread-local cache will keep a list of pooled buffers which must be returned to
-            // the pool when the thread is not alive anymore.
-            ThreadDeathWatcher.watch(deathWatchThread, freeTask);
-        } else {
-            freeTask = null;
-            deathWatchThread = null;
+        // Only check if there are caches in use.
+        if ((tinySubPageDirectCaches != null || smallSubPageDirectCaches != null || normalDirectCaches != null
+                || tinySubPageHeapCaches != null || smallSubPageHeapCaches != null || normalHeapCaches != null)
+                && freeSweepAllocationThreshold < 1) {
+            throw new IllegalArgumentException("freeSweepAllocationThreshold: "
+                    + freeSweepAllocationThreshold + " (expected: > 0)");
         }
     }
 
@@ -240,35 +221,42 @@ final class PoolThreadCache {
         }
     }
 
+    /// TODO: In the future when we move to Java9+ we should use java.lang.ref.Cleaner.
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            super.finalize();
+        } finally {
+            free();
+        }
+    }
+
     /**
      *  Should be called if the Thread that uses this cache is about to exist to release resources out of the cache
      */
     void free() {
-        if (freeTask != null) {
-            assert deathWatchThread != null;
-            ThreadDeathWatcher.unwatch(deathWatchThread, freeTask);
-        }
-        free0();
-    }
+        // As free() may be called either by the finalizer or by FastThreadLocal.onRemoval(...) we need to ensure
+        // we only call this one time.
+        if (freed.compareAndSet(false, true)) {
+            int numFreed = free(tinySubPageDirectCaches) +
+                    free(smallSubPageDirectCaches) +
+                    free(normalDirectCaches) +
+                    free(tinySubPageHeapCaches) +
+                    free(smallSubPageHeapCaches) +
+                    free(normalHeapCaches);
 
-    private void free0() {
-        int numFreed = free(tinySubPageDirectCaches) +
-                free(smallSubPageDirectCaches) +
-                free(normalDirectCaches) +
-                free(tinySubPageHeapCaches) +
-                free(smallSubPageHeapCaches) +
-                free(normalHeapCaches);
+            if (numFreed > 0 && logger.isDebugEnabled()) {
+                logger.debug("Freed {} thread-local buffer(s) from thread: {}", numFreed,
+                        Thread.currentThread().getName());
+            }
 
-        if (numFreed > 0 && logger.isDebugEnabled()) {
-            logger.debug("Freed {} thread-local buffer(s) from thread: {}", numFreed, Thread.currentThread().getName());
-        }
+            if (directArena != null) {
+                directArena.numThreadCaches.getAndDecrement();
+            }
 
-        if (directArena != null) {
-            directArena.numThreadCaches.getAndDecrement();
-        }
-
-        if (heapArena != null) {
-            heapArena.numThreadCaches.getAndDecrement();
+            if (heapArena != null) {
+                heapArena.numThreadCaches.getAndDecrement();
+            }
         }
     }
 

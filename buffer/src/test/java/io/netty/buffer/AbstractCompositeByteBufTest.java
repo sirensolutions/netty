@@ -87,7 +87,7 @@ public abstract class AbstractCompositeByteBufTest extends AbstractByteBufTest {
             buffers.add(EMPTY_BUFFER);
         }
 
-        ByteBuf buffer = wrappedBuffer(Integer.MAX_VALUE, buffers.toArray(new ByteBuf[buffers.size()])).order(order);
+        ByteBuf buffer = wrappedBuffer(Integer.MAX_VALUE, buffers.toArray(new ByteBuf[0])).order(order);
 
         // Truncate to the requested capacity.
         buffer.capacity(length);
@@ -1116,4 +1116,24 @@ public abstract class AbstractCompositeByteBufTest extends AbstractByteBufTest {
         assertEquals(0, buffer.refCnt());
     }
 
+    @Test
+    public void testAllocatorIsSameWhenCopy() {
+        testAllocatorIsSameWhenCopy(false);
+    }
+
+    @Test
+    public void testAllocatorIsSameWhenCopyUsingIndexAndLength() {
+        testAllocatorIsSameWhenCopy(true);
+    }
+
+    private void testAllocatorIsSameWhenCopy(boolean withIndexAndLength) {
+        ByteBuf buffer = newBuffer(8);
+        buffer.writeZero(4);
+        ByteBuf copy = withIndexAndLength ? buffer.copy(0, 4) : buffer.copy();
+        assertEquals(buffer, copy);
+        assertEquals(buffer.isDirect(), copy.isDirect());
+        assertSame(buffer.alloc(), copy.alloc());
+        buffer.release();
+        copy.release();
+    }
 }

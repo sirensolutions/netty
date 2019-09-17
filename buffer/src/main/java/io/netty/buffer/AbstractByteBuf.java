@@ -196,7 +196,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
 
     @Override
     public ByteBuf resetWriterIndex() {
-        writerIndex = markedWriterIndex;
+        writerIndex(markedWriterIndex);
         return this;
     }
 
@@ -854,6 +854,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
 
     @Override
     public ByteBuf readSlice(int length) {
+        checkReadableBytes(length);
         ByteBuf slice = slice(readerIndex, length);
         readerIndex += length;
         return slice;
@@ -861,6 +862,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
 
     @Override
     public ByteBuf readRetainedSlice(int length) {
+        checkReadableBytes(length);
         ByteBuf slice = retainedSlice(readerIndex, length);
         readerIndex += length;
         return slice;
@@ -1171,6 +1173,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
 
     @Override
     public ByteBuf duplicate() {
+        ensureAccessible();
         return new UnpooledDuplicatedByteBuf(this);
     }
 
@@ -1191,6 +1194,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
 
     @Override
     public ByteBuf slice(int index, int length) {
+        ensureAccessible();
         return new UnpooledSlicedByteBuf(this, index, length);
     }
 
