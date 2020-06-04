@@ -152,13 +152,16 @@ public final class PlatformDependent {
         //           (note: that JDK's direct memory limit is independent of this).
         long maxDirectMemory = SystemPropertyUtil.getLong("io.netty.maxDirectMemory", -1);
 
+        if (maxDirectMemory < 0) {
+          maxDirectMemory = MAX_DIRECT_MEMORY;
+        }
+
         if (maxDirectMemory == 0 || !hasUnsafe() || !PlatformDependent0.hasDirectBufferNoCleanerConstructor()) {
             USE_DIRECT_BUFFER_NO_CLEANER = false;
             DIRECT_MEMORY_COUNTER = null;
         } else {
             USE_DIRECT_BUFFER_NO_CLEANER = true;
             if (maxDirectMemory < 0) {
-                maxDirectMemory = MAX_DIRECT_MEMORY;
                 if (maxDirectMemory <= 0) {
                     DIRECT_MEMORY_COUNTER = null;
                 } else {
