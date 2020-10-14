@@ -820,7 +820,7 @@ final class PlatformDependent0 {
 
     private static boolean explicitTryReflectionSetAccessible0() {
         // we disable reflective access
-        return SystemPropertyUtil.getBoolean("io.netty.tryReflectionSetAccessible", javaVersion() < 15);
+        return SystemPropertyUtil.getBoolean("io.netty.tryReflectionSetAccessible", javaVersion() < 16);
     }
 
     static boolean isExplicitTryReflectionSetAccessible() {
