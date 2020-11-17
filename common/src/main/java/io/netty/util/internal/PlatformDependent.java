@@ -112,6 +112,8 @@ public final class PlatformDependent {
         }
     };
 
+    public static final String JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY = "io.netty.maxDirectMemory";
+
     static {
         if (javaVersion() >= 7) {
             RANDOM_PROVIDER = new ThreadLocalRandomProvider() {
@@ -150,7 +152,7 @@ public final class PlatformDependent {
         // * == 0  - Use cleaner, Netty will not enforce max memory, and instead will defer to JDK.
         // * >  0  - Don't use cleaner. This will limit Netty's total direct memory
         //           (note: that JDK's direct memory limit is independent of this).
-        long maxDirectMemory = SystemPropertyUtil.getLong("io.netty.maxDirectMemory", -1);
+        long maxDirectMemory = SystemPropertyUtil.getLong(JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY, -1);
 
         if (maxDirectMemory < 0) {
           maxDirectMemory = MAX_DIRECT_MEMORY;
@@ -172,7 +174,7 @@ public final class PlatformDependent {
             }
         }
         DIRECT_MEMORY_LIMIT = maxDirectMemory;
-        logger.debug("-Dio.netty.maxDirectMemory: {} bytes", maxDirectMemory);
+        logger.debug("-D{}: {} bytes", JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY, maxDirectMemory);
 
         int tryAllocateUninitializedArray =
                 SystemPropertyUtil.getInt("io.netty.uninitializedArrayAllocationThreshold", 1024);
