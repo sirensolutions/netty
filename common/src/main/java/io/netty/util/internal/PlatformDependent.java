@@ -1347,20 +1347,6 @@ public final class PlatformDependent {
         return "unknown";
     }
 
-    /**
-     * @deprecated As of release siren-4.1.27-4 this method will return 0L if {@link #javaVersion()} is 9+.
-     */
-    @Deprecated
-    public static long getDirectMemoryCounter() {
-        if (PlatformDependent0.hasDirectBufferNoCleanerConstructor()) {
-            return DIRECT_MEMORY_COUNTER.get();
-        } else {
-            logger.warn("sun.misc.Unsafe or java.nio.DirectByteBuffer.<init>(long, int) not available, " +
-              "therefore there is no count direct memory allocation");
-            return 0L;
-        }
-    }
-
     public static long directMemoryLimit() {
         return DIRECT_MEMORY_LIMIT;
     }
