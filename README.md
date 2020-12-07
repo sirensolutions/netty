@@ -4,10 +4,11 @@
 
 The following parameters have been prefixed with the `siren` keyword in order to avoid conflict with users possibly setting Netty's original parameters:
 
-- io.netty.recycler.maxCapacityPerThread;
-- io.netty.recycler.maxCapacity;
-- io.netty.buffer.bytebuf.checkAccessible; and
-- io.netty.noUnsafe.
+- io.netty.recycler.maxCapacityPerThread
+- io.netty.maxDirectMemory
+- io.netty.recycler.maxCapacity
+- io.netty.buffer.bytebuf.checkAccessible
+- io.netty.noUnsafe
 
 The default value of DEFAULT_INITIAL_MAX_CAPACITY_PER_THREAD is set to 0 instead of 32k so that netty's recycler is disabled. See https://github.com/elastic/elasticsearch/pull/22452 for more context on the issues with the recycler.
 
