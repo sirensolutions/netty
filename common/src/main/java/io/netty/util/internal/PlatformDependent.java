@@ -128,13 +128,16 @@ public final class PlatformDependent {
         }
     };
 
+    /**
+     * @deprecated use {@link PlatformDependentCompanion} to set and get the max direct memmory instead of this
+     * Java system property.
+     */
     public static final String JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY = "io.netty.maxDirectMemory";
 
     static {
         if (javaVersion() >= 7) {
             RANDOM_PROVIDER = new ThreadLocalRandomProvider() {
                 @Override
-                @SuppressJava6Requirement(reason = "Usage guarded by java version check")
                 public Random current() {
                     return java.util.concurrent.ThreadLocalRandom.current();
                 }
@@ -146,6 +149,9 @@ public final class PlatformDependent {
                     return ThreadLocalRandom.current();
                 }
             };
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("-Dio.netty.noPreferDirect: {}", !DIRECT_BUFFER_PREFERRED);
         }
 
         // Here is how the system property is used:
