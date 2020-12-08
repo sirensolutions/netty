@@ -31,10 +31,10 @@ public final class PlatformDependentCompanion {
   /**
    * No check whether the max direct memory is set or not.
    */
-  public static final String NO_CHECK = "none";
+  public static final String NO_CHECK_ENABLED = "none";
 
   /**
-   * When this Java system property is set to anything but the string {@link #NO_CHECK},
+   * When this Java system property is set to anything but the string {@link #NO_CHECK_ENABLED},
    * {@link #checkSetMaxDirectMemoryWasCalled()} throws an {@link IllegalAccessException}
    * if the max direct memory is not set.
    */
@@ -75,7 +75,7 @@ public final class PlatformDependentCompanion {
    *                                otherwise it just returns.
    */
   public static synchronized void checkSetMaxDirectMemoryWasCalled() throws IllegalAccessException {
-    if (System.getProperty(JAVA_SYS_PROP_ENABLE_SIREN_CHECK, NO_CHECK).equals(NO_CHECK)) {
+    if (System.getProperty(JAVA_SYS_PROP_ENABLE_SIREN_CHECK, NO_CHECK_ENABLED).equals(NO_CHECK_ENABLED)) {
       logger.warn("checkSetMaxDirectMemoryWasCalled() and is disabled. To enable this check, " +
         "set Java system property '{}' to yes", JAVA_SYS_PROP_ENABLE_SIREN_CHECK);
       return;
