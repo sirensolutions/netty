@@ -19,7 +19,7 @@ import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 
 /**
- * This method is the preferred way to set the max direct memory instead of using
+ * This class is the preferred way to set the max direct memory instead of using
  * {@link PlatformDependent#JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY}.
  *
  * Optionally, one can check that the max direct memory is set prior to calling {@link #getMaxDirectMemory()} by using
@@ -34,9 +34,9 @@ public final class PlatformDependentCompanion {
   public static final String NO_CHECK = "none";
 
   /**
-   * When this Java system property is set to anything but the string {@link #NO_CHECK}, the
-   * {@link #checkSetMaxDirectMemoryWasCalled()} with throw
-   * an {@link IllegalAccessException} if the max direct memory is not set.
+   * When this Java system property is set to anything but the string {@link #NO_CHECK},
+   * {@link #checkSetMaxDirectMemoryWasCalled()} throws an {@link IllegalAccessException}
+   * if the max direct memory is not set.
    */
   public static final String JAVA_SYS_PROP_ENABLE_SIREN_CHECK = "siren.memory.direct.max.check.enable";
 
