@@ -17,9 +17,9 @@ package io.netty.util.internal;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
-public final class PlatformDependentMaxDirectMemoryTest {
+public final class MaxDirectMemorySettingTest {
 
   /**
    * This test tests only one case when the classloader loads the {@link PlatformDependent} class.
@@ -27,25 +27,12 @@ public final class PlatformDependentMaxDirectMemoryTest {
    * initialize it and dismiss this test case.
    * <p/>
    * A JUnit test runner that could use different classloader per test method would allow to test cases
-   * where the MaxDirectMemorySetting check is enabled, settting vs not setting the max direct memory.
+   * where the MaxDirectMemorySetting check is enabled, setting vs not setting the max direct memory.
    */
   @Test
-  public void testEnforceMaxDirectMemorySetException() {
-    final String prop =
-      System.getProperty(MaxDirectMemorySetting.JAVA_SYS_PROP_ENABLE_SIREN_CHECK,
-        MaxDirectMemorySetting.NO_CHECK_ENABLED);
-    System.setProperty(MaxDirectMemorySetting.JAVA_SYS_PROP_ENABLE_SIREN_CHECK, "yes");
+  public void testSetMaxDirectMemory() {
+    MaxDirectMemorySetting.set(2012);
 
-    Throwable t = null;
-    try {
-      PlatformDependent.directMemoryLimit();
-    } catch (Error e) {
-      t = e.getCause();
-    } finally {
-      System.setProperty(MaxDirectMemorySetting.JAVA_SYS_PROP_ENABLE_SIREN_CHECK, prop);
-    }
-
-    assertTrue("Expected to be notified that max direct memory is not set",
-      t instanceof IllegalAccessException && t.getMessage().contains("max direct memory is not set."));
+    assertEquals(MaxDirectMemorySetting.get(), PlatformDependent.directMemoryLimit());
   }
 }
