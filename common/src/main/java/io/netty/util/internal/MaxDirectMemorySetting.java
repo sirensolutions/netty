@@ -15,6 +15,9 @@
  */
 package io.netty.util.internal;
 
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
+
 /**
  * This class is the preferred way to set the max direct memory instead of using
  * {@link PlatformDependent#JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY}.
@@ -24,6 +27,11 @@ package io.netty.util.internal;
  * to {@link PlatformDependent}.
  */
 public final class MaxDirectMemorySetting {
+
+  /**
+   * No check whether the max direct memory is set or not.
+   */
+  public static final String NO_CHECK_ENABLED = "none";
 
   private static final long MAX_DIRECT_MEMORY_USE_DEFAULT = -1L;
 
@@ -35,7 +43,7 @@ public final class MaxDirectMemorySetting {
 
   public static synchronized void set(long m) {
     if (m < 0) {
-      throw new IllegalArgumentException("Specified max_direct_memory must be greater or equal to 0, got " + m);
+      throw new IllegalArgumentException("Specified m must be greater or equal to 0");
     }
 
     maxDirectMemory = m;
