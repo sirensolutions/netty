@@ -112,11 +112,7 @@ public final class PlatformDependent {
         }
     };
 
-    /**
-     * @deprecated use {@link PlatformDependentCompanion} to set and get the max direct memory instead of this
-     * Java system property.
-     */
-    public static final String JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY = "io.netty.maxDirectMemory";
+    public static final String JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY = "";
 
     static {
         if (javaVersion() >= 7) {
@@ -149,17 +145,7 @@ public final class PlatformDependent {
                 "instability.");
         }
 
-        // Make sure that 3rd party library had the chance to set the max direct memory prior to getting in here.
-        try {
-            PlatformDependentCompanion.checkSetMaxDirectMemoryWasCalled();
-        } catch (IllegalAccessException e) {
-            logger.error("To avoid this exception please either let Netty use the default value for " +
-              "the max direct memory by calling PlatformDependentCompanion.setUseDefaultMaxDirectMemory() or call " +
-              "PlatformDependentCompanion.setMaxDirectMemory(long m) to tell Netty the max direct memory to use here.");
-            throwException(e);
-        }
-
-        long maxDirectMemory = PlatformDependentCompanion.getMaxDirectMemory();
+        long maxDirectMemory = MaxDirectMemorySetting.get();
         if (maxDirectMemory < 0) {
             // Here is how the system property is used:
             //
@@ -169,15 +155,9 @@ public final class PlatformDependent {
             // * >  0  - Don't use cleaner. This will limit Netty's total direct memory
             //           (note: that JDK's direct memory limit is independent of this).
             maxDirectMemory = SystemPropertyUtil.getLong(JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY, -1);
-
-            if (maxDirectMemory >= 0) {
-                logger.warn("Using java system property '{}' is deprecated and will be removed in the future in favor" +
-                    " of using one of the setter methods from the class '{}'" ,
-                  JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY, PlatformDependentCompanion.class.getName());
-            }
         } else {
-            logger.info("max direct memory was defined using a setter method from the class '{}'" ,
-              PlatformDependentCompanion.class.getName());
+            logger.debug("max direct memory was defined using a setter method from the class '{}'" ,
+              MaxDirectMemorySetting.class.getName());
         }
 
         if (maxDirectMemory < 0) {
