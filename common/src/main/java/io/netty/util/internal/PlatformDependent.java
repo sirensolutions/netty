@@ -29,13 +29,11 @@ import org.jctools.util.Pow2;
 import org.jctools.util.UnsafeAccess;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Deque;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
@@ -68,9 +66,6 @@ public final class PlatformDependent {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(PlatformDependent.class);
 
-    private static final Pattern MAX_DIRECT_MEMORY_SIZE_ARG_PATTERN = Pattern.compile(
-            "\\s*-XX:MaxDirectMemorySize\\s*=\\s*([0-9]+)\\s*([kKmMgG]?)\\s*$");
-
     private static final boolean IS_WINDOWS = isWindows0();
     private static final boolean IS_OSX = isOsx0();
 
@@ -81,7 +76,7 @@ public final class PlatformDependent {
     private static final Throwable UNSAFE_UNAVAILABILITY_CAUSE = unsafeUnavailabilityCause0();
     private static final boolean DIRECT_BUFFER_PREFERRED =
             UNSAFE_UNAVAILABILITY_CAUSE == null && !SystemPropertyUtil.getBoolean("io.netty.noPreferDirect", false);
-    private static final long MAX_DIRECT_MEMORY = maxDirectMemory0();
+    private static final long MAX_DIRECT_MEMORY = MaxDirectMemorySetting.maxDirectMemory0();
 
     private static final int MPSC_CHUNK_SIZE =  1024;
     private static final int MIN_MAX_MPSC_CAPACITY =  MPSC_CHUNK_SIZE * 2;
@@ -995,80 +990,6 @@ public final class PlatformDependent {
             // Probably failed to initialize PlatformDependent0.
             return new UnsupportedOperationException("Could not determine if Unsafe is available", t);
         }
-    }
-
-    private static long maxDirectMemory0() {
-        long maxDirectMemory = 0;
-
-        ClassLoader systemClassLoader = null;
-        try {
-            systemClassLoader = getSystemClassLoader();
-
-            // When using IBM J9 / Eclipse OpenJ9 we should not use VM.maxDirectMemory() as it not reflects the
-            // correct value.
-            // See:
-            //  - https://github.com/netty/netty/issues/7654
-            String vmName = SystemPropertyUtil.get("java.vm.name", "").toLowerCase();
-            if (!vmName.startsWith("ibm j9") &&
-                    // https://github.com/eclipse/openj9/blob/openj9-0.8.0/runtime/include/vendor_version.h#L53
-                    !vmName.startsWith("eclipse openj9")) {
-                // Try to get from sun.misc.VM.maxDirectMemory() which should be most accurate.
-                Class<?> vmClass = Class.forName("sun.misc.VM", true, systemClassLoader);
-                Method m = vmClass.getDeclaredMethod("maxDirectMemory");
-                maxDirectMemory = ((Number) m.invoke(null)).longValue();
-            }
-        } catch (Throwable ignored) {
-            // Ignore
-        }
-
-        if (maxDirectMemory > 0) {
-            return maxDirectMemory;
-        }
-
-        try {
-            // Now try to get the JVM option (-XX:MaxDirectMemorySize) and parse it.
-            // Note that we are using reflection because Android doesn't have these classes.
-            Class<?> mgmtFactoryClass = Class.forName(
-                    "java.lang.management.ManagementFactory", true, systemClassLoader);
-            Class<?> runtimeClass = Class.forName(
-                    "java.lang.management.RuntimeMXBean", true, systemClassLoader);
-
-            Object runtime = mgmtFactoryClass.getDeclaredMethod("getRuntimeMXBean").invoke(null);
-
-            @SuppressWarnings("unchecked")
-            List<String> vmArgs = (List<String>) runtimeClass.getDeclaredMethod("getInputArguments").invoke(runtime);
-            for (int i = vmArgs.size() - 1; i >= 0; i --) {
-                Matcher m = MAX_DIRECT_MEMORY_SIZE_ARG_PATTERN.matcher(vmArgs.get(i));
-                if (!m.matches()) {
-                    continue;
-                }
-
-                maxDirectMemory = Long.parseLong(m.group(1));
-                switch (m.group(2).charAt(0)) {
-                    case 'k': case 'K':
-                        maxDirectMemory *= 1024;
-                        break;
-                    case 'm': case 'M':
-                        maxDirectMemory *= 1024 * 1024;
-                        break;
-                    case 'g': case 'G':
-                        maxDirectMemory *= 1024 * 1024 * 1024;
-                        break;
-                }
-                break;
-            }
-        } catch (Throwable ignored) {
-            // Ignore
-        }
-
-        if (maxDirectMemory <= 0) {
-            maxDirectMemory = Runtime.getRuntime().maxMemory();
-            logger.debug("maxDirectMemory: {} bytes (maybe)", maxDirectMemory);
-        } else {
-            logger.debug("maxDirectMemory: {} bytes", maxDirectMemory);
-        }
-
-        return maxDirectMemory;
     }
 
     private static File tmpdir0() {
