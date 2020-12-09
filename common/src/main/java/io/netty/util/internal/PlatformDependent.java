@@ -112,7 +112,7 @@ public final class PlatformDependent {
         }
     };
 
-    public static final String JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY = "";
+    public static final String JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY = "io.netty.maxDirectMemory";
 
     static {
         if (javaVersion() >= 7) {
