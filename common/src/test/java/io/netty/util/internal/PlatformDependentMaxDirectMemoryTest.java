@@ -27,14 +27,14 @@ public final class PlatformDependentMaxDirectMemoryTest {
    * initialize it and dismiss this test case.
    * <p/>
    * A JUnit test runner that could use different classloader per test method would allow to test cases
-   * where the PlatformDependentCompanion check is enabled, settting vs not setting the max direct memory.
+   * where the MaxDirectMemorySetting check is enabled, settting vs not setting the max direct memory.
    */
   @Test
   public void testEnforceMaxDirectMemorySetException() {
     final String prop =
-      System.getProperty(PlatformDependentCompanion.JAVA_SYS_PROP_ENABLE_SIREN_CHECK,
-        PlatformDependentCompanion.NO_CHECK);
-    System.setProperty(PlatformDependentCompanion.JAVA_SYS_PROP_ENABLE_SIREN_CHECK, "yes");
+      System.getProperty(MaxDirectMemorySetting.JAVA_SYS_PROP_ENABLE_SIREN_CHECK,
+        MaxDirectMemorySetting.NO_CHECK_ENABLED);
+    System.setProperty(MaxDirectMemorySetting.JAVA_SYS_PROP_ENABLE_SIREN_CHECK, "yes");
 
     Throwable t = null;
     try {
@@ -42,7 +42,7 @@ public final class PlatformDependentMaxDirectMemoryTest {
     } catch (Error e) {
       t = e.getCause();
     } finally {
-      System.setProperty(PlatformDependentCompanion.JAVA_SYS_PROP_ENABLE_SIREN_CHECK, prop);
+      System.setProperty(MaxDirectMemorySetting.JAVA_SYS_PROP_ENABLE_SIREN_CHECK, prop);
     }
 
     assertTrue("Expected to be notified that max direct memory is not set",

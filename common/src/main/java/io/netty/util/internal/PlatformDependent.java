@@ -154,14 +154,31 @@ public final class PlatformDependent {
             logger.debug("-Dio.netty.noPreferDirect: {}", !DIRECT_BUFFER_PREFERRED);
         }
 
-        // Here is how the system property is used:
-        //
-        // * <  0  - Don't use cleaner, and inherit max direct memory from java. In this case the
-        //           "practical max direct memory" would be 2 * max memory as defined by the JDK.
-        // * == 0  - Use cleaner, Netty will not enforce max memory, and instead will defer to JDK.
-        // * >  0  - Don't use cleaner. This will limit Netty's total direct memory
-        //           (note: that JDK's direct memory limit is independent of this).
-        long maxDirectMemory = SystemPropertyUtil.getLong(JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY, -1);
+        /*
+         * We do not want to log this message if unsafe is explicitly disabled. Do not remove the explicit no unsafe
+         * guard.
+         */
+        if (!hasUnsafe() && !isAndroid() && !PlatformDependent0.isExplicitNoUnsafe()) {
+            logger.info(
+              "Your platform does not provide complete low-level API for accessing direct buffers reliably. " +
+                "Unless explicitly requested, heap buffer will always be preferred to avoid potential system " +
+                "instability.");
+        }
+
+        long maxDirectMemory = MaxDirectMemorySetting.get();
+        if (maxDirectMemory < 0) {
+            // Here is how the system property is used:
+            //
+            // * <  0  - Don't use cleaner, and inherit max direct memory from java. In this case the
+            //           "practical max direct memory" would be 2 * max memory as defined by the JDK.
+            // * == 0  - Use cleaner, Netty will not enforce max memory, and instead will defer to JDK.
+            // * >  0  - Don't use cleaner. This will limit Netty's total direct memory
+            //           (note: that JDK's direct memory limit is independent of this).
+            maxDirectMemory = SystemPropertyUtil.getLong(JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY, -1);
+        } else {
+            logger.debug("max direct memory was defined using a setter method from the class '{}'" ,
+              MaxDirectMemorySetting.class.getName());
+        }
 
         if (maxDirectMemory < 0) {
           maxDirectMemory = MAX_DIRECT_MEMORY;
