@@ -129,7 +129,7 @@ public final class PlatformDependent {
     };
 
     /**
-     * @deprecated use {@link PlatformDependentCompanion} to set and get the max direct memmory instead of this
+     * @deprecated use {@link PlatformDependentCompanion} to set and get the max direct memory instead of this
      * Java system property.
      */
     public static final String JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY = "io.netty.maxDirectMemory";
