@@ -57,7 +57,7 @@ public final class PlatformDependentCompanion {
 
   public static synchronized void setMaxDirectMemory(long m) {
     if (m < 0) {
-      throw new IllegalArgumentException("Specified m must be greater or equal to 0");
+      throw new IllegalArgumentException("The specified max direct memory must be greater or equal to 0");
     }
 
     maxDirectMemory = m;
