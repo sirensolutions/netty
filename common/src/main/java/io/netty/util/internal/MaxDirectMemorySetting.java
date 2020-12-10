@@ -46,7 +46,7 @@ public final class MaxDirectMemorySetting {
 
   public static synchronized void set(long m) {
     if (m < 0) {
-      throw new IllegalArgumentException("Specified m must be greater or equal to 0");
+      throw new IllegalArgumentException("Specified max_direct_memory must be greater or equal to 0, got " + m);
     }
 
     maxDirectMemory = m;
