@@ -92,8 +92,9 @@ public final class PlatformDependent {
     private static final boolean CAN_ENABLE_TCP_NODELAY_BY_DEFAULT = !isAndroid();
 
     private static final Throwable UNSAFE_UNAVAILABILITY_CAUSE = unsafeUnavailabilityCause0();
-    private static final boolean DIRECT_BUFFER_PREFERRED;
-    private static final long MAX_DIRECT_MEMORY = maxDirectMemory0();
+    private static final boolean DIRECT_BUFFER_PREFERRED =
+            UNSAFE_UNAVAILABILITY_CAUSE == null && !SystemPropertyUtil.getBoolean("io.netty.noPreferDirect", false);
+    private static final long MAX_DIRECT_MEMORY = MaxDirectMemorySetting.maxDirectMemory0();
 
     private static final int MPSC_CHUNK_SIZE =  1024;
     private static final int MIN_MAX_MPSC_CAPACITY =  MPSC_CHUNK_SIZE * 2;
