@@ -26,15 +26,14 @@ import java.util.regex.Pattern;
 /**
  * This class is the preferred way to set the max direct memory instead of using
  * {@link PlatformDependent#JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY}.
+ *
+ * Some infrastructure may prevent the use of Java system property from the user perspective, and configuration files
+ * allow to set the max direct memory programmatically using this class before any call made
+ * to {@link PlatformDependent}.
  */
 public final class MaxDirectMemorySetting {
 
   private static final InternalLogger logger = InternalLoggerFactory.getInstance(MaxDirectMemorySetting.class);
-
-  /**
-   * No check whether the max direct memory is set or not.
-   */
-  public static final String NO_CHECK_ENABLED = "none";
 
   private static final long MAX_DIRECT_MEMORY_USE_DEFAULT = -1L;
 
