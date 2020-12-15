@@ -15,6 +15,7 @@
  */
 package io.netty.util.internal;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -30,9 +31,9 @@ public final class MaxDirectMemorySettingTest {
    * where the MaxDirectMemorySetting check is enabled, setting vs not setting the max direct memory.
    */
   @Test
+  @Ignore("see test comment")
   public void testSetMaxDirectMemory() {
     MaxDirectMemorySetting.set(2012);
-
     assertEquals(MaxDirectMemorySetting.get(), PlatformDependent.directMemoryLimit());
   }
 }
