@@ -166,15 +166,15 @@ public final class PlatformDependent {
                 "instability.");
         }
 
+        // Here is how the system property is used:
+        //
+        // * <  0  - Don't use cleaner, and inherit max direct memory from java. In this case the
+        //           "practical max direct memory" would be 2 * max memory as defined by the JDK.
+        // * == 0  - Use cleaner, Netty will not enforce max memory, and instead will defer to JDK.
+        // * >  0  - Don't use cleaner. This will limit Netty's total direct memory
+        //           (note: that JDK's direct memory limit is independent of this).
         long maxDirectMemory = MaxDirectMemorySetting.get();
         if (maxDirectMemory < 0) {
-            // Here is how the system property is used:
-            //
-            // * <  0  - Don't use cleaner, and inherit max direct memory from java. In this case the
-            //           "practical max direct memory" would be 2 * max memory as defined by the JDK.
-            // * == 0  - Use cleaner, Netty will not enforce max memory, and instead will defer to JDK.
-            // * >  0  - Don't use cleaner. This will limit Netty's total direct memory
-            //           (note: that JDK's direct memory limit is independent of this).
             maxDirectMemory = SystemPropertyUtil.getLong(JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY, -1);
         } else {
             logger.debug("max direct memory was defined using a setter method from the class '{}'" ,
