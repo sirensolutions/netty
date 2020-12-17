@@ -140,9 +140,9 @@ public final class PlatformDependent {
          */
         if (!hasUnsafe() && !isAndroid() && !PlatformDependent0.isExplicitNoUnsafe()) {
             logger.info(
-                    "Your platform does not provide complete low-level API for accessing direct buffers reliably. " +
-                    "Unless explicitly requested, heap buffer will always be preferred to avoid potential system " +
-                    "instability.");
+              "Your platform does not provide complete low-level API for accessing direct buffers reliably. " +
+                "Unless explicitly requested, heap buffer will always be preferred to avoid potential system " +
+                "instability.");
         }
 
         // Here is how the system property is used:
@@ -152,7 +152,13 @@ public final class PlatformDependent {
         // * == 0  - Use cleaner, Netty will not enforce max memory, and instead will defer to JDK.
         // * >  0  - Don't use cleaner. This will limit Netty's total direct memory
         //           (note: that JDK's direct memory limit is independent of this).
-        long maxDirectMemory = SystemPropertyUtil.getLong(JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY, -1);
+        long maxDirectMemory = MaxDirectMemorySetting.get();
+        if (maxDirectMemory < 0) {
+            maxDirectMemory = SystemPropertyUtil.getLong(JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY, -1);
+        } else {
+            logger.debug("max direct memory was defined using a setter method from the class '{}'" ,
+              MaxDirectMemorySetting.class.getName());
+        }
 
         if (maxDirectMemory < 0) {
           maxDirectMemory = MAX_DIRECT_MEMORY;
