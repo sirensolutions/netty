@@ -223,7 +223,7 @@ final class PlatformDependent0 {
                                 try {
                                     final Constructor<?> constructor =
                                             direct.getClass().getDeclaredConstructor(long.class, int.class);
-                                    Throwable cause = ReflectionUtil.trySetAccessible(constructor);
+                                    Throwable cause = ReflectionUtil.trySetAccessible(constructor, true);
                                     if (cause != null) {
                                         return cause;
                                     }
@@ -291,7 +291,7 @@ final class PlatformDependent0 {
                             }
                         }
                         Method unalignedMethod = bitsClass.getDeclaredMethod("unaligned");
-                        Throwable cause = ReflectionUtil.trySetAccessible(unalignedMethod);
+                        Throwable cause = ReflectionUtil.trySetAccessible(unalignedMethod, true);
                         if (cause != null) {
                             return cause;
                         }
@@ -646,7 +646,6 @@ final class PlatformDependent0 {
         long remainingBytes = length & 7;
         final long baseOffset1 = BYTE_ARRAY_BASE_OFFSET + startPos1;
         final long baseOffset2 = BYTE_ARRAY_BASE_OFFSET + startPos2;
-        final int remainingBytes = length & 7;
         final long end = baseOffset1 + remainingBytes;
         final long diff = startPos2 - startPos1;
         for (long i = baseOffset1 - 8 + length; i >= end; i -= 8) {
