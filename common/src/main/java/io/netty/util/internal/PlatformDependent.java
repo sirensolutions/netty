@@ -143,6 +143,7 @@ public final class PlatformDependent {
         if (javaVersion() >= 7) {
             RANDOM_PROVIDER = new ThreadLocalRandomProvider() {
                 @Override
+                @SuppressJava6Requirement(reason = "Usage guarded by java version check")
                 public Random current() {
                     return java.util.concurrent.ThreadLocalRandom.current();
                 }
