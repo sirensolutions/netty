@@ -120,6 +120,10 @@ public final class PlatformDependent {
     private static final Cleaner CLEANER;
     private static final int UNINITIALIZED_ARRAY_ALLOCATION_THRESHOLD;
 
+    // For specifications, see https://www.freedesktop.org/software/systemd/man/os-release.html
+    private static final String[] OS_RELEASE_FILES = {"/etc/os-release", "/usr/lib/os-release"};
+    private static final String LINUX_ID_PREFIX = "ID=";
+    private static final String LINUX_ID_LIKE_PREFIX = "ID_LIKE=";
     public static final boolean BIG_ENDIAN_NATIVE_ORDER = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 
     private static final Cleaner NOOP = new Cleaner() {
@@ -223,9 +227,6 @@ public final class PlatformDependent {
             CLEANER = NOOP;
         }
 
-        // We should always prefer direct buffers by default if we can use a Cleaner to release direct buffers.
-        DIRECT_BUFFER_PREFERRED = CLEANER != NOOP
-                                  && !SystemPropertyUtil.getBoolean("io.netty.noPreferDirect", false);
         if (logger.isDebugEnabled()) {
             logger.debug("-Dio.netty.noPreferDirect: {}", !DIRECT_BUFFER_PREFERRED);
         }
