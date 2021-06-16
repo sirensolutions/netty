@@ -21,7 +21,7 @@ With the change of defaults, some parameters need to have their original default
 For example, in order to build the `common` and `buffer` packages, execute the following command:
 
 ```sh
-$ JAVA_HOME=/usr/lib/jvm/java-8-jdk mvn package -pl dev-tools,common,buffer -Dsiren.io.netty.buffer.bytebuf.checkAccessible=true -Dsiren.io.netty.recycler.maxCapacityPerThread=32768
+$ JAVA_HOME=/usr/lib/jvm/java-8-jdk mvn package -pl dev-tools,common,buffer -Dsiren.io.netty.buffer.bytebuf.checkAccessible=false -Dsiren.io.netty.recycler.maxCapacityPerThread=32768
 ```
 
 To deploy:
