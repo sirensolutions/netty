@@ -75,7 +75,6 @@ final class PlatformDependent0 {
         if ((unsafeUnavailabilityCause = EXPLICIT_NO_UNSAFE_CAUSE) != null) {
             direct = null;
             addressField = null;
-            unsafeUnavailabilityCause = new UnsupportedOperationException("Unsafe explicitly disabled");
             unsafe = null;
             internalUnsafe = null;
         } else {
@@ -645,7 +644,6 @@ final class PlatformDependent0 {
         long result = 0;
         long remainingBytes = length & 7;
         final long baseOffset1 = BYTE_ARRAY_BASE_OFFSET + startPos1;
-        final long baseOffset2 = BYTE_ARRAY_BASE_OFFSET + startPos2;
         final long end = baseOffset1 + remainingBytes;
         final long diff = startPos2 - startPos1;
         for (long i = baseOffset1 - 8 + length; i >= end; i -= 8) {

@@ -57,7 +57,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
         if (SystemPropertyUtil.contains(PROP_CHECK_ACCESSIBLE)) {
             checkAccessible = SystemPropertyUtil.getBoolean(PROP_CHECK_ACCESSIBLE, true);
         } else {
-            checkAccessible = SystemPropertyUtil.getBoolean(LEGACY_PROP_CHECK_ACCESSIBLE, true);
+            checkAccessible = SystemPropertyUtil.getBoolean(LEGACY_PROP_CHECK_ACCESSIBLE, false);
         }
         checkBounds = SystemPropertyUtil.getBoolean(PROP_CHECK_BOUNDS, false);
         if (logger.isDebugEnabled()) {
@@ -310,11 +310,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
     @Override
     public int ensureWritable(int minWritableBytes, boolean force) {
         ensureAccessible();
-        if (minWritableBytes < 0) {
-            throw new IllegalArgumentException(String.format(
-                    "minWritableBytes: %d (expected: >= 0)", minWritableBytes));
-        }
-
+        checkPositiveOrZero(minWritableBytes, "minWritableBytes");
         if (minWritableBytes <= writableBytes()) {
             return 0;
         }
@@ -330,8 +326,9 @@ public abstract class AbstractByteBuf extends ByteBuf {
             return 3;
         }
 
-        // Normalize the current capacity to the power of 2.
-        int newCapacity = alloc().calculateNewCapacity(writerIndex + minWritableBytes, maxCapacity);
+        int fastWritable = maxFastWritableBytes();
+        int newCapacity = fastWritable >= minWritableBytes ? writerIndex + fastWritable
+                : alloc().calculateNewCapacity(writerIndex + minWritableBytes, maxCapacity);
 
         // Adjust to the new capacity.
         capacity(newCapacity);
