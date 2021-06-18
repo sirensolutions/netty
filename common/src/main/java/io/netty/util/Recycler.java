@@ -89,7 +89,7 @@ public abstract class Recycler<T> {
 
         if (logger.isDebugEnabled()) {
             if (DEFAULT_MAX_CAPACITY_PER_THREAD == 0) {
-                logger.debug("-Dio.netty.recycler.maxCapacityPerThread: disabled");
+                logger.debug("-Dsiren.io.netty.recycler.maxCapacityPerThread: disabled");
                 logger.debug("-Dio.netty.recycler.maxSharedCapacityFactor: disabled");
                 logger.debug("-Dio.netty.recycler.linkCapacity: disabled");
                 logger.debug("-Dio.netty.recycler.ratio: disabled");
