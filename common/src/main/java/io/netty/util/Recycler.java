@@ -63,7 +63,7 @@ public abstract class Recycler<T> {
         // e.g. io.netty.recycler.maxCapacity.writeTask
         //      io.netty.recycler.maxCapacity.outboundBuffer
         int maxCapacityPerThread = SystemPropertyUtil.getInt("siren.io.netty.recycler.maxCapacityPerThread",
-                SystemPropertyUtil.getInt("siren.io.netty.recycler.maxCapacity", DEFAULT_INITIAL_MAX_CAPACITY_PER_THREAD));
+             SystemPropertyUtil.getInt("siren.io.netty.recycler.maxCapacity", DEFAULT_INITIAL_MAX_CAPACITY_PER_THREAD));
         if (maxCapacityPerThread < 0) {
             maxCapacityPerThread = DEFAULT_INITIAL_MAX_CAPACITY_PER_THREAD;
         }

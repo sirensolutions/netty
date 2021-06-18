@@ -53,7 +53,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
     private static final boolean checkBounds;
 
     static {
-	// siren: set the default value to false
+        // siren: set the default value to false
         if (SystemPropertyUtil.contains(PROP_CHECK_ACCESSIBLE)) {
             checkAccessible = SystemPropertyUtil.getBoolean(PROP_CHECK_ACCESSIBLE, false);
         } else {

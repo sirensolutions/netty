@@ -48,3 +48,4 @@ public final class MaxDirectMemorySetting {
     return maxDirectMemory;
   }
 }
+
