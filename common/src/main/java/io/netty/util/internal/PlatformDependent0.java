@@ -392,27 +392,15 @@ final class PlatformDependent0 {
     }
 
     private static Throwable explicitNoUnsafeCause0() {
-        final boolean noUnsafe = SystemPropertyUtil.getBoolean("io.netty.noUnsafe", false);
-        logger.debug("-Dio.netty.noUnsafe: {}", noUnsafe);
+        final boolean noUnsafe = SystemPropertyUtil.getBoolean("siren.io.netty.noUnsafe", false);
+        logger.debug("-Dsiren.io.netty.noUnsafe: {}", noUnsafe);
 
         if (noUnsafe) {
-            logger.debug("sun.misc.Unsafe: unavailable (io.netty.noUnsafe)");
-            return new UnsupportedOperationException("sun.misc.Unsafe: unavailable (io.netty.noUnsafe)");
+            logger.debug("sun.misc.Unsafe: unavailable (siren.io.netty.noUnsafe)");
+            return new UnsupportedOperationException("sun.misc.Unsafe: unavailable (siren.io.netty.noUnsafe)");
         }
 
-        // Legacy properties
-        String unsafePropName;
-        if (SystemPropertyUtil.contains("io.netty.tryUnsafe")) {
-            unsafePropName = "io.netty.tryUnsafe";
-        } else {
-            unsafePropName = "org.jboss.netty.tryUnsafe";
-        }
-
-        if (!SystemPropertyUtil.getBoolean(unsafePropName, true)) {
-            String msg = "sun.misc.Unsafe: unavailable (" + unsafePropName + ")";
-            logger.debug(msg);
-            return new UnsupportedOperationException(msg);
-        }
+        // siren: we don't support legacy properties
 
         return null;
     }
@@ -634,6 +622,7 @@ final class PlatformDependent0 {
                 }
             }
         }
+
         if (remainingBytes >= 4) {
             remainingBytes -= 4;
             long pos = baseOffset1 + remainingBytes;

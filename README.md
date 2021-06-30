@@ -1,3 +1,36 @@
+# Siren fork of Netty
+
+## Changes
+
+All the parameters `io.netty.*` were prefixed with the `siren` keyword in order to avoid conflict with users possibly setting Netty's original parameters.
+
+- io.netty.recycler.maxCapacityPerThread;
+- io.netty.recycler.maxCapacity;
+- io.netty.buffer.bytebuf.checkAccessible; and
+- io.netty.noUnsafe.
+
+The default value of DEFAULT_INITIAL_MAX_CAPACITY_PER_THREAD is set to 0 instead of 32k so that netty's recycler is disabled. See https://github.com/elastic/elasticsearch/pull/22452 for more context on the issues with the recycler.
+
+## Build
+
+With the change of defaults, some parameters need to have their original default values for the build to pass:
+
+- set `siren.io.netty.recycler.maxCapacityPerThread` to `32768`
+- set `siren.io.netty.buffer.bytebuf.checkAccessible` to `false`
+- set `siren.io.netty.buffer.checkBounds` to `false`
+
+For example, in order to build the `common` and `buffer` packages, execute the following command:
+
+```sh
+$ JAVA_HOME=/usr/lib/jvm/java-11-openjdk mvn package -pl dev-tools,common,buffer -Dsiren.io.netty.buffer.checkAccessible=false -Dsiren.io.netty.recycler.maxCapacityPerThread=32768 -Dsiren.io.netty.buffer.checkBounds=false
+```
+
+To deploy:
+
+```sh
+$ mvn clean deploy -DskipTests=true -pl dev-tools,common,buffer -P artifactory -Dartifactory_username=<USERNAME> -Dartifactory_password=<PASSWORD>
+```
+
 # Netty Project
 
 Netty is an asynchronous event-driven network application framework for rapid development of maintainable high performance protocol servers & clients.

@@ -46,19 +46,20 @@ import static io.netty.util.internal.ObjectUtil.checkPositiveOrZero;
  */
 public abstract class AbstractByteBuf extends ByteBuf {
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(AbstractByteBuf.class);
-    private static final String LEGACY_PROP_CHECK_ACCESSIBLE = "io.netty.buffer.bytebuf.checkAccessible";
-    private static final String PROP_CHECK_ACCESSIBLE = "io.netty.buffer.checkAccessible";
+    private static final String LEGACY_PROP_CHECK_ACCESSIBLE = "siren.io.netty.buffer.bytebuf.checkAccessible";
+    private static final String PROP_CHECK_ACCESSIBLE = "siren.io.netty.buffer.checkAccessible";
     static final boolean checkAccessible; // accessed from CompositeByteBuf
-    private static final String PROP_CHECK_BOUNDS = "io.netty.buffer.checkBounds";
+    private static final String PROP_CHECK_BOUNDS = "siren.io.netty.buffer.checkBounds";
     private static final boolean checkBounds;
 
     static {
+        // siren: set the default value to false
         if (SystemPropertyUtil.contains(PROP_CHECK_ACCESSIBLE)) {
-            checkAccessible = SystemPropertyUtil.getBoolean(PROP_CHECK_ACCESSIBLE, true);
+            checkAccessible = SystemPropertyUtil.getBoolean(PROP_CHECK_ACCESSIBLE, false);
         } else {
-            checkAccessible = SystemPropertyUtil.getBoolean(LEGACY_PROP_CHECK_ACCESSIBLE, true);
+            checkAccessible = SystemPropertyUtil.getBoolean(LEGACY_PROP_CHECK_ACCESSIBLE, false);
         }
-        checkBounds = SystemPropertyUtil.getBoolean(PROP_CHECK_BOUNDS, true);
+        checkBounds = SystemPropertyUtil.getBoolean(PROP_CHECK_BOUNDS, false);
         if (logger.isDebugEnabled()) {
             logger.debug("-D{}: {}", PROP_CHECK_ACCESSIBLE, checkAccessible);
             logger.debug("-D{}: {}", PROP_CHECK_BOUNDS, checkBounds);
@@ -310,7 +311,6 @@ public abstract class AbstractByteBuf extends ByteBuf {
     public int ensureWritable(int minWritableBytes, boolean force) {
         ensureAccessible();
         checkPositiveOrZero(minWritableBytes, "minWritableBytes");
-
         if (minWritableBytes <= writableBytes()) {
             return 0;
         }

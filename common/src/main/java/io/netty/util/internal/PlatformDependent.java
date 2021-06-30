@@ -73,7 +73,7 @@ import static java.lang.Math.min;
  * {@code sun.misc.Unsafe} object.
  * <p>
  * You can disable the use of {@code sun.misc.Unsafe} if you specify
- * the system property <strong>io.netty.noUnsafe</strong>.
+ * the system property <strong>siren.io.netty.noUnsafe</strong>.
  */
 public final class PlatformDependent {
 
@@ -118,6 +118,7 @@ public final class PlatformDependent {
     private static final ThreadLocalRandomProvider RANDOM_PROVIDER;
     private static final Cleaner CLEANER;
     private static final int UNINITIALIZED_ARRAY_ALLOCATION_THRESHOLD;
+
     // For specifications, see https://www.freedesktop.org/software/systemd/man/os-release.html
     private static final String[] OS_RELEASE_FILES = {"/etc/os-release", "/usr/lib/os-release"};
     private static final String LINUX_ID_PREFIX = "ID=";
@@ -130,6 +131,12 @@ public final class PlatformDependent {
             // NOOP
         }
     };
+
+    /**
+     * @deprecated use {@link PlatformDependentCompanion} to set and get the max direct memory instead of this
+     * Java system property.
+     */
+    public static final String JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY = "io.netty.maxDirectMemory";
 
     static {
         if (javaVersion() >= 7) {
@@ -149,6 +156,17 @@ public final class PlatformDependent {
             };
         }
 
+        /*
+         * We do not want to log this message if unsafe is explicitly disabled. Do not remove the explicit no unsafe
+         * guard.
+         */
+        if (!hasUnsafe() && !isAndroid() && !PlatformDependent0.isExplicitNoUnsafe()) {
+            logger.info(
+              "Your platform does not provide complete low-level API for accessing direct buffers reliably. " +
+                "Unless explicitly requested, heap buffer will always be preferred to avoid potential system " +
+                "instability.");
+        }
+
         // Here is how the system property is used:
         //
         // * <  0  - Don't use cleaner, and inherit max direct memory from java. In this case the
@@ -156,7 +174,17 @@ public final class PlatformDependent {
         // * == 0  - Use cleaner, Netty will not enforce max memory, and instead will defer to JDK.
         // * >  0  - Don't use cleaner. This will limit Netty's total direct memory
         //           (note: that JDK's direct memory limit is independent of this).
-        long maxDirectMemory = SystemPropertyUtil.getLong("io.netty.maxDirectMemory", -1);
+        long maxDirectMemory = MaxDirectMemorySetting.get();
+        if (maxDirectMemory < 0) {
+            maxDirectMemory = SystemPropertyUtil.getLong(JAVA_SYS_PROP_IO_NETTY_MAX_DIRECT_MEMORY, -1);
+        } else {
+            logger.debug("max direct memory was defined using a setter method from the class '{}'" ,
+              MaxDirectMemorySetting.class.getName());
+        }
+
+        if (maxDirectMemory < 0) {
+          maxDirectMemory = MAX_DIRECT_MEMORY;
+        }
 
         if (maxDirectMemory == 0 || !hasUnsafe() || !PlatformDependent0.hasDirectBufferNoCleanerConstructor()) {
             USE_DIRECT_BUFFER_NO_CLEANER = false;
@@ -164,7 +192,6 @@ public final class PlatformDependent {
         } else {
             USE_DIRECT_BUFFER_NO_CLEANER = true;
             if (maxDirectMemory < 0) {
-                maxDirectMemory = MAX_DIRECT_MEMORY;
                 if (maxDirectMemory <= 0) {
                     DIRECT_MEMORY_COUNTER = null;
                 } else {
@@ -1457,6 +1484,14 @@ public final class PlatformDependent {
         }
 
         return "unknown";
+    }
+
+    public static long getDirectMemoryCounter() {
+        return DIRECT_MEMORY_COUNTER.get();
+    }
+
+    public static long directMemoryLimit() {
+        return DIRECT_MEMORY_LIMIT;
     }
 
     private static final class AtomicLongCounter extends AtomicLong implements LongCounter {
