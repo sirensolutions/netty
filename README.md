@@ -22,7 +22,7 @@ With the change of defaults, some parameters need to have their original default
 For example, in order to build the `common` and `buffer` packages, execute the following command:
 
 ```sh
-$ JAVA_HOME=/usr/lib/jvm/java-11-openjdk mvn package -pl dev-tools,common,buffer -Dsiren.io.netty.buffer.checkAccessible=false -Dsiren.io.netty.recycler.maxCapacityPerThread=32768 -Dsiren.io.netty.buffer.checkBounds=false
+$ JAVA_HOME=/usr/lib/jvm/java-11-openjdk mvn package -pl dev-tools,common,buffer -Dsiren.io.netty.buffer.checkAccessible=true -Dsiren.io.netty.recycler.maxCapacityPerThread=32768 -Dsiren.io.netty.buffer.checkBounds=true
 ```
 
 To deploy:
